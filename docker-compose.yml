@@ -1,0 +1,21 @@
+version: "3"
+services:
+  db:
+    image: postgres:12
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: remitano
+      POSTGRES_USER: admin
+      POSTGRES_DB: remitano
+    ports:
+      - "5435:5432"
+  app:
+    container_name: remitano_server
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/usr/src/app/remitano_server
+    depends_on:
+      - db
