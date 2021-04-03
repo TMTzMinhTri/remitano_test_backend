@@ -23,14 +23,68 @@ class User < ApplicationRecord
   attr_writer :login
 
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, authentication_keys: [:username]
-         
+         :recoverable, :rememberable, :validatable, authentication_keys: [:login]
+
+  has_many :movies, dependent: :destroy
+
+  #  validations
   validates :username, presence: true, uniqueness: { case_sensitive: false }
-  
+
+  # callback
+  before_save :set_authentication_token
+
+  def email_required?
+    false
+  end
+
+  def email_changed?
+    false
+  end
+
+  def will_save_change_to_email?
+    false
+  end
+
+  def login
+    @login ||= self.username
+  end
+
+  def set_new_authentication_token
+    update_columns(authentication_token: generate_authentication_token)
+  end
+
   class << self
-    def find_for_database_authentication(warden_conditions)
-      conditions = warden_conditions.dup
-      p conditions
+    def authorize(params)
+      return find_by(authentication_token: params[:access_token]) if params[:access_token]
+
+      account = find_for_database_authentication(params.slice(*authentication_keys))
+
+      return unless account && account.valid_password?(params[:password])
+      account
+    end
+
+    def authorize!(params)
+      user = authorize(params)
+
+      unless user
+        raise ApplicationError, "Email or Password is not correct"
+      end
+
+      user.set_new_authentication_token if user.authentication_token.blank?
+      user
+    end
+  end
+
+  private
+
+  def set_authentication_token
+    self.authentication_token ||= generate_authentication_token
+  end
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless self.class.exists?(authentication_token: token)
     end
   end
 end
