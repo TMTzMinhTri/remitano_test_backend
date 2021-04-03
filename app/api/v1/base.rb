@@ -5,5 +5,6 @@ class V1::Base < Grape::API
     version "v1"
   
     mount V1::User
+    mount V1::Movie
   end
   
