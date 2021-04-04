@@ -54,10 +54,17 @@ class User < ApplicationRecord
   end
 
   class << self
+    def find_for_database_authentication(warden_conditions)
+      conditions = warden_conditions.dup
+      if username = conditions.delete(:username)
+        where(conditions.to_h).where("lower(username) = ?", username.downcase).first
+      end
+    end
+
     def authorize(params)
       return find_by(authentication_token: params[:access_token]) if params[:access_token]
 
-      account = find_for_database_authentication(params.slice(*authentication_keys))
+      account = find_for_database_authentication(params.slice(:username))
 
       return unless account && account.valid_password?(params[:password])
       account
@@ -67,7 +74,7 @@ class User < ApplicationRecord
       user = authorize(params)
 
       unless user
-        raise ApplicationError, "Email or Password is not correct"
+        raise ApplicationError, "Username or Password is not correct"
       end
 
       user.set_new_authentication_token if user.authentication_token.blank?
