@@ -6,8 +6,11 @@ class MovieService
 
   def create
     movie = @current_user.movies.new(link: @link)
-    movie.save
-    movie
+    if movie.save
+      [nil, movie]
+    else
+      [movie.errors.full_messages.join(", "), nil]
+    end
   end
 
   class << self

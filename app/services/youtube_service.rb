@@ -33,13 +33,17 @@ class YoutubeService
   end
 
   def get_detail
-    id = @data["items"][0]["id"]
-    item = @data["items"][0]["snippet"]
-    {
-      id: id,
-      title: item["title"],
-      description: item["description"],
-      tags: item["tags"],
-    }
+    if @data["items"].present?
+      id = @data["items"][0]["id"]
+      item = @data["items"][0]["snippet"]
+      {
+        id: id,
+        title: item["title"],
+        description: item["description"],
+        tags: item["tags"],
+      }
+    else 
+      nil
+    end
   end
 end

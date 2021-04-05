@@ -18,8 +18,11 @@
 #
 class Movie < ApplicationRecord
   belongs_to :user
-  validates :link, presence: true
 
+  default_scope { order('created_at DESC') }
+  
+  validates :link, presence: true
+  validate :valid_url
 
   def title
     video[:title]
@@ -38,6 +41,10 @@ class Movie < ApplicationRecord
   end
 
   private
+
+  def valid_url
+    errors.add(:link, "unvalid") if video.nil?
+  end
 
   def video
     @video ||= YoutubeService.new(link).get_video
