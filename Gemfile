@@ -45,3 +45,4 @@ gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "grape"
 gem "grape-entity"
 gem "grape_logging"
+gem 'pagy', '~> 3.5'

@@ -137,6 +137,7 @@ GEM
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     orm_adapter (0.5.0)
+    pagy (3.12.0)
     pg (1.2.3)
     puma (5.2.2)
       nio4r (~> 2.0)
@@ -212,6 +213,7 @@ DEPENDENCIES
   grape-entity
   grape_logging
   listen (~> 3.3)
+  pagy (~> 3.5)
   pg (~> 1.1)
   puma (~> 5.0)
   rack-cors
