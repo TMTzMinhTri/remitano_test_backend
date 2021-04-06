@@ -15,7 +15,7 @@ module V1::Concerns::Helpers
   end
 
   def pagination_values(collection)
-    pagy, data = pagy collection
+    pagy, data = pagy collection, {:items => 5}
     {
       data: data,
       pagination: pagy,
